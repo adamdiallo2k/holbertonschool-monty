@@ -21,6 +21,46 @@ char *get_name(char *path)
 	}
 	return (token);
 }
+
+
+/**
+* getbuffer - function
+* @buffer: tha buffer oft the getline
+* Description: a function to analyse each line and use the right function
+* Return: nothing
+*/
+void *getbuffer(char *buffer)
+{
+	int i = 0;
+	int y = 0;
+	char **argv = NULL;
+	char *token = NULL;
+
+	token = malloc(sizeof(char) * 1024);
+	if (!token)
+		exit(2);
+	argv = malloc(sizeof(char *) * 1024);
+	if (!argv)
+		exit(2);
+	instruction_t inst[] = {{"push", "ppoiuhy"}, {0, "NULL"}};
+
+	token = strtok(buffer, " \n");
+	while (token)
+	{
+		argv[i] = token;
+		token = strtok(NULL, " \n");
+		i++;
+	}
+	for (i = 0; argv[i] != NULL; i++)
+	{
+		for (y = 0; inst[y].opcode; y++)
+		{
+			if (strcmp(inst[y].opcode, argv[i]) == 0)
+				printf("%s\n",argv[i + 1]);
+		}
+	}
+}
+
 /**
  * main - main function for monty interpreter
  * @argc: arg count
@@ -66,6 +106,7 @@ int main(int argc, char *argv[])
 	}
 	/* Get the first line of the file. */
 	line_size = getline(&buffer, &bufsize, fileOpen);
+
 	/* Loop through until we are done with the file. */
 	while (line_size >= 0)
 	{
@@ -87,11 +128,14 @@ int main(int argc, char *argv[])
 		line_count++;
 
 		/* Show the line details */
-		printf("line[%06d]: chars=%06zd, buf size=%06zu, contents: %s", line_count,
+		printf("line[%06d]: chars=%06zd, buf size=%06zu, contents: %s\n", line_count,
 				line_size, bufsize, buffer);
 
 		/* Get the next line */
 		line_size = getline(&buffer, &line_size, fileOpen);
+		getbuffer(buffer);
+
+
 	}
 	free(buffer);
 	buffer = NULL;
