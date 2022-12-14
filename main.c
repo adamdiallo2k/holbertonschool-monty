@@ -1,5 +1,6 @@
 #include "monty.h"
 #include <stdio.h>
+#include <stdlib.h>
 /**
  * get_name - function
  * @path: tha path to be analyzed
@@ -8,6 +9,7 @@
  */
 char *get_name(char *path)
 {
+	stack_t **stack;
 	char *token;
 	char *temp;
 
@@ -21,15 +23,14 @@ char *get_name(char *path)
 	}
 	return (token);
 }
-
-
+int global_variable;
 /**
 * getbuffer - function
 * @buffer: tha buffer oft the getline
 * Description: a function to analyse each line and use the right function
 * Return: nothing
 */
-void *getbuffer(char *buffer)
+void *getbuffer(char *buffer, stack_t *stack, int line_count)
 {
 	int i = 0;
 	int y = 0;
@@ -42,7 +43,7 @@ void *getbuffer(char *buffer)
 	argv = malloc(sizeof(char *) * 1024);
 	if (!argv)
 		exit(2);
-	instruction_t inst[] = {{"push", "ppoiuhy"}, {0, "NULL"}};
+	instruction_t inst[] = {{"push", push}, {"NULL", 0}};
 
 	token = strtok(buffer, " \n");
 	while (token)
@@ -56,10 +57,47 @@ void *getbuffer(char *buffer)
 		for (y = 0; inst[y].opcode; y++)
 		{
 			if (strcmp(inst[y].opcode, argv[i]) == 0)
-				printf("%s\n",argv[i + 1]);
+			{
+				global_variable = atoi(argv[i + 1]);
+				inst[y].f(&stack, line_count);
+			}
 		}
 	}
 }
+
+void push(stack_t **stack, unsigned int line_number)
+{
+	stack_t *h;
+	stack_t *new = malloc(sizeof(stack_t));
+
+	if (new == NULL)
+		exit(2);
+
+	new->n = global_variable;
+
+	if (!*stack)
+	{
+		new->next = NULL;
+		new->prev = NULL;
+		*stack = new;
+	}
+	else
+	{
+	 h = *stack;
+
+	while (h->next)
+		h = h->next;
+
+	if (h != NULL)
+		h->prev = new;
+
+	h->next = new;
+	new->prev = h;
+	new->next = NULL;
+	}
+}
+
+
 
 /**
  * main - main function for monty interpreter
@@ -74,6 +112,8 @@ int main(int argc, char *argv[])
 	ssize_t line_size;
 	char *fileName, *buffer = NULL;
 	int line_count = 0;
+	stack_t *st;
+
 	/*handle error cases*/
 	/**
 	 *If the user does not give any file
@@ -133,7 +173,7 @@ int main(int argc, char *argv[])
 
 		/* Get the next line */
 		line_size = getline(&buffer, &line_size, fileOpen);
-		getbuffer(buffer);
+		getbuffer(buffer, st,line_count);
 
 
 	}
