@@ -32,11 +32,13 @@ int global_variable = 1;
 */
 void *getbuffer(char *buffer, stack_t **stack, unsigned int line_count)
 {
-	printf("1");
 	int i = 0;
 	int y = 0;
 	char **argv = NULL;
 	char *token = NULL;
+
+	if (buffer == NULL)
+		exit(2);
 
 	token = malloc(sizeof(char) * 1024);
 	if (!token)
@@ -44,7 +46,7 @@ void *getbuffer(char *buffer, stack_t **stack, unsigned int line_count)
 	argv = malloc(sizeof(char *) * 1024);
 	if (!argv)
 		exit(2);
-	instruction_t inst[] = {{"push", push}, {"NULL", 0}};
+	instruction_t inst[] = {{"push",push}, {"pall",pall}, {NULL, 0}};
 
 	token = strtok(buffer, " \n");
 	while (token)
@@ -56,57 +58,45 @@ void *getbuffer(char *buffer, stack_t **stack, unsigned int line_count)
 	for (i = 0; argv[i] != NULL; i++)
 	{
 		for (y = 0; inst[y].opcode; y++)
-		{
+		{	
 			if (strcmp(inst[y].opcode, argv[i]) == 0)
-			{
-				/*global_variable = atoi(argv[i + 1]);*/
-				/*printf("%d",global_variable);*/
-				/*inst[y].f(stack, line_count);¨*/
-			}
+		{
+				if (strcmp(argv[0], "pall") != 0)
+					global_variable = atoi(argv[i + 1]);
+				inst[y].f(stack, line_count);
 		}
-	}
-	free(argv);
-	free(token);
+		}
+}
 }
 
 void push(stack_t **stack, unsigned int line_number)
 {
-
-	stack_t *new = NULL;
-	new = malloc(sizeof(stack_t));
-
+	stack_t *new = malloc(sizeof(stack_t));
 	if (new == NULL)
-	
 		exit(2);
-	
 
+	if (!stack)
+		exit(2);
 	new->n = global_variable;
-
-	if (!*stack)
-	{
-		new->next = NULL;
-		new->prev = NULL;
-		*stack = new;
-		free(new);
-	}
-	else
-	{
-
-	while ((*stack)->next)
-		*stack = (*stack)->next;
+	
+	new->next = (*stack);
+	new->prev = NULL;
 
 	if (*stack != NULL)
 		(*stack)->prev = new;
 
-	(*stack)->next = new;
-	new->prev = *stack;
-	new->next = NULL;
-
+	*stack = new;
+	printf("%d",(*stack)->n);
+}
+void pall(stack_t **stack, unsigned int line_number)
+{
+	printf("\nteseswrxdtcfyvuebinr,kdncbhfvnt\n");
+	while (*stack)
+	{
+		printf("%d\n", (*stack)->n);
+		*stack = (*stack)->next;
 	}
 }
-
-
-
 /**
  * main - main function for monty interpreter
  * @argc: arg count
@@ -156,10 +146,9 @@ int main(int argc, char *argv[])
 		dprintf(STDERR_FILENO, "Error: Can't open file %s\n", fileName);
 	}
 	/* Get the first line of the file. */
-	line_size = getline(&buffer, &bufsize, fileOpen);
 
 	/* Loop through until we are done with the file. */
-	while (line_size >= 0)
+	while (getline(&buffer, &bufsize, fileOpen) >= 0)
 	{
 		/**
 		 *If the file contains an invalid instruction,
@@ -176,21 +165,18 @@ int main(int argc, char *argv[])
 		 */
 
 		/* Increment our line count */
-		line_count++;
+
 
 		/* Show the line details */
-		printf("line[%06d]: chars=%06zd, buf size=%06zu, contents: %s\n", line_count,
-				line_size, bufsize, buffer);
+		//printf("line[%06d]: chars=%06zd, buf size=%06zu, contents: %s\n", line_count,
+				//line_size, bufsize, buffer);
 
 		/* Get the next line */
 		printf("line_size\n");
-		line_size = getline(&buffer, &line_size, fileOpen);
-		printf("getbuffer\n");
-		getbuffer(buffer, st,line_count);
-
-
+		/*line_size = getline(&buffer, &line_size, fileOpen);*/
+		getbuffer(buffer, st, line_count);
+		line_count++;
 	}
-	free(buffer);
 	fclose(fileOpen);
 	return (0);
 
