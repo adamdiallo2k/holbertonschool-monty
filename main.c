@@ -7,7 +7,7 @@
  * Description: a function that checks if a number is digit or not
  * Return: 0 on success 1 on failure
  */
-int is_digit(char *s, unsigned int line_count, char *parameter)
+int is_digit(char *s, unsigned int line_count)
 {
 	int n;
 	int i;
@@ -20,7 +20,7 @@ int is_digit(char *s, unsigned int line_count, char *parameter)
 	{
 		if (!(s[i] >= '0' && s[i] <= '9'))
 		{
-			fprintf(stderr, "L%u: unknown instruction %s\n", line_count, parameter);
+			fprintf(stderr, "L%u: usage: push integer\n", line_count);
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -64,13 +64,6 @@ void getbuffer(char *buffer, stack_t **stack, unsigned int line_count)
 	if (buffer == NULL)
 		exit(2);
 
-	/*token = malloc(sizeof(char) * 1024);
-	  if (!token)
-	  exit(2);
-	  */
-	/*argv = malloc(sizeof(char *) * 1024);
-	  if (!argv)
-	  exit(2);*/
 	instruction_t inst[] = {{"push", push}, {"pall", pall}, {NULL, 0}};
 
 	token = strtok(buffer, " \n");
@@ -88,7 +81,7 @@ void getbuffer(char *buffer, stack_t **stack, unsigned int line_count)
 		{
 			if (strcmp(argv[0], "push") == 0)
 			{
-				/*0s_digit(argv[1], line_count, inst[y].opcode);*/
+				is_digit(argv[1], line_count);
 				global_variable = atoi(argv[1]);
 			}
 			inst[y].f(stack, line_count);
