@@ -1,6 +1,76 @@
 #include "monty.h"
 #include <stdio.h>
+<<<<<<< HEAD
+#include <string.h>
+#include <ctype.h>
+unsigned int LINE_NUMBER;
+int is_digit(char *str)
+{
+	int i, status;
+	for (i = 0; str[i] != '\0'; i++)
+	{
+		if (status == 1)
+		{
+			break;
+			printf("not digit");
+			return (1);
+		}
+		while (isdigit(str[i]))
+		{
+			printf("%c", str[i]);
+
+			if (isdigit(str[i + 1]))
+			{
+				status = 1;
+			}
+			i++;
+		}
+	}
+
+	return (0);
+
+}
+void push(stack_t **stack, unsigned int line_number)
+{
+	printf("\nhi\n");
+	/**
+	  stack_t *h;
+	  stack_t *new = malloc(sizeof(stack_t));
+
+	  if (new == NULL)
+	  exit(2);
+
+	 *new->n = global_variable;
+
+	 if (!*stack)
+	 {
+	 new->next = NULL;
+	 new->prev = NULL;
+	 *stack = new;
+	 }
+	 else
+	 {
+	 h = *stack;
+
+	 while (h->next)
+	 h = h->next;
+
+	 if (h != NULL)
+	 h->prev = new;
+
+	 h->next = new;
+	 new->prev = h;
+	 new->next = NULL;
+	 }
+	 */
+}
+
+=======
 #include <stdlib.h>
+>>>>>>> 8f47b0892f5e5f33d40369f4732253c37200d1ed
+=======
+#include <stdlib.h>
+>>>>>>> 669d6b031db2f14d32b9cfb373a3a701845ec1d5
 /**
  * get_name - function
  * @path: tha path to be analyzed
@@ -23,20 +93,47 @@ char *get_name(char *path)
 	}
 	return (token);
 }
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+/**
+ * buffer_analyzer - function
+ * @buffer: tha buffer oft the getline
+ * Description: a function to analyse each line and use the right function
+ * Return: nothing
+ */
+void *buffer_analyzer(char *buffer)
+{/*declare a pointer of type stack_t to access the n variable*/
+	stack_t *stack = NULL;
+	/* LINE_NUMBER should be a global variable, but i guess am using it wrong so its generating errors*/
+	/*unsigned int LINE_NUMBER;*/
+	int i, y, j = 0;
+	y = 0;
+	i = 0;
+=======
+int global_variable;
+=======
 int global_variable = 1;
+>>>>>>> 669d6b031db2f14d32b9cfb373a3a701845ec1d5
 /**
 * getbuffer - function
 * @buffer: tha buffer oft the getline
 * Description: a function to analyse each line and use the right function
 * Return: nothing
 */
+<<<<<<< HEAD
+void *getbuffer(char *buffer, stack_t *stack, int line_count)
+=======
 void *getbuffer(char *buffer, stack_t **stack, unsigned int line_count)
+>>>>>>> 669d6b031db2f14d32b9cfb373a3a701845ec1d5
 {
 	printf("1");
 	int i = 0;
 	int y = 0;
+>>>>>>> 8f47b0892f5e5f33d40369f4732253c37200d1ed
 	char **argv = NULL;
 	char *token = NULL;
+	instruction_t inst[] = {{"push", push}, {0, NULL}};
 
 	token = malloc(sizeof(char) * 1024);
 	if (!token)
@@ -44,24 +141,48 @@ void *getbuffer(char *buffer, stack_t **stack, unsigned int line_count)
 	argv = malloc(sizeof(char *) * 1024);
 	if (!argv)
 		exit(2);
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> 669d6b031db2f14d32b9cfb373a3a701845ec1d5
 	instruction_t inst[] = {{"push", push}, {"NULL", 0}};
 
+>>>>>>> 8f47b0892f5e5f33d40369f4732253c37200d1ed
 	token = strtok(buffer, " \n");
 	while (token)
 	{
 		argv[i] = token;
 		token = strtok(NULL, " \n");
+		printf("%s\n", argv[i]);
 		i++;
 	}
+<<<<<<< HEAD
+	if (is_digit(argv[0]) == 0)
+		inst[y].f(&stack, LINE_NUMBER);
+	/*if (strcmp(inst[y].opcode, argv[y]) == 0)*/
+	/*printf("%s", argv[i + 1]);*/
+	/*stack->n = atoi(argv[i + 1]);*/
+	free(token);
+	token = NULL;
+	free(argv);
+	argv = NULL;
+}
+=======
 	for (i = 0; argv[i] != NULL; i++)
 	{
 		for (y = 0; inst[y].opcode; y++)
 		{
 			if (strcmp(inst[y].opcode, argv[i]) == 0)
 			{
+<<<<<<< HEAD
+				global_variable = atoi(argv[i + 1]);
+				inst[y].f(&stack, line_count);
+=======
 				/*global_variable = atoi(argv[i + 1]);*/
 				/*printf("%d",global_variable);*/
 				/*inst[y].f(stack, line_count);¨*/
+>>>>>>> 669d6b031db2f14d32b9cfb373a3a701845ec1d5
 			}
 		}
 	}
@@ -105,8 +226,46 @@ void push(stack_t **stack, unsigned int line_number)
 	}
 }
 
+<<<<<<< HEAD
+void push(stack_t **stack, unsigned int line_number)
+{
+	stack_t *h;
+	stack_t *new = malloc(sizeof(stack_t));
+
+	if (new == NULL)
+		exit(2);
+
+	new->n = global_variable;
+
+	if (!*stack)
+	{
+		new->next = NULL;
+		new->prev = NULL;
+		*stack = new;
+	}
+	else
+	{
+	 h = *stack;
+
+	while (h->next)
+		h = h->next;
+
+	if (h != NULL)
+		h->prev = new;
+
+	h->next = new;
+	new->prev = h;
+	new->next = NULL;
+	}
+}
 
 
+
+>>>>>>> 8f47b0892f5e5f33d40369f4732253c37200d1ed
+=======
+
+
+>>>>>>> 669d6b031db2f14d32b9cfb373a3a701845ec1d5
 /**
  * main - main function for monty interpreter
  * @argc: arg count
@@ -119,11 +278,22 @@ int main(int argc, char *argv[])
 	size_t  bufsize;
 	ssize_t line_size;
 	char *fileName, *buffer = NULL;
+<<<<<<< HEAD
+
+	/*unsigned int*/
+	/*LINE_NUMBER = 0;*/
+
+	/*int line_count = 0;*/
+=======
 	int line_count = 0;
+<<<<<<< HEAD
+	stack_t *st;
+=======
 	stack_t **st = NULL;
 	st = malloc(sizeof(stack_t));
 	if (!st)
 		exit(2);
+>>>>>>> 669d6b031db2f14d32b9cfb373a3a701845ec1d5
 
 	/*handle error cases*/
 	/**
@@ -132,22 +302,12 @@ int main(int argc, char *argv[])
 	 *print the error message USAGE: monty file
 	 *followed by a new line, and exit with the status EXIT_FAILURE
 	 */
+>>>>>>> 8f47b0892f5e5f33d40369f4732253c37200d1ed
 	if (argc != 2)
 	{
 		dprintf(STDERR_FILENO, "USAGE: monty file\n");
 		return (EXIT_FAILURE);
 	}
-	/**
-	 *If, for any reason, it’s not possible to open the file,
-	 *print the error message Error: Can't open file <file>,
-	 *followed by a new line, and exit with the status EXIT_FAILURE
-	 *where <file> is the name of the file
-	 */
-	/**
-	 * so we need to extract the name of the file from the path
-	 * using strtok
-	 * create a function to extract the name
-	 */
 	fileName = get_name(argv[1]);
 	printf("%s\n", fileName);
 	fileOpen = fopen(fileName, "r");
@@ -155,12 +315,12 @@ int main(int argc, char *argv[])
 	{
 		dprintf(STDERR_FILENO, "Error: Can't open file %s\n", fileName);
 	}
-	/* Get the first line of the file. */
-	line_size = getline(&buffer, &bufsize, fileOpen);
-
-	/* Loop through until we are done with the file. */
-	while (line_size >= 0)
+	while (getline(&buffer, &bufsize, fileOpen) >= 0)
 	{
+<<<<<<< HEAD
+		LINE_NUMBER++;
+		buffer_analyzer(buffer);
+=======
 		/**
 		 *If the file contains an invalid instruction,
 		 *print the error message L<line_number>:unknown instruction <opcode>,
@@ -185,10 +345,14 @@ int main(int argc, char *argv[])
 		/* Get the next line */
 		printf("line_size\n");
 		line_size = getline(&buffer, &line_size, fileOpen);
+<<<<<<< HEAD
+=======
 		printf("getbuffer\n");
+>>>>>>> 669d6b031db2f14d32b9cfb373a3a701845ec1d5
 		getbuffer(buffer, st,line_count);
 
 
+>>>>>>> 8f47b0892f5e5f33d40369f4732253c37200d1ed
 	}
 	free(buffer);
 	fclose(fileOpen);
