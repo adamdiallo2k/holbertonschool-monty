@@ -1,6 +1,33 @@
 #include "monty.h"
 #include <stdio.h>
 #include <stdlib.h>
+
+int is_digit(char *str)
+{
+        int i, status;
+        for (i = 0; str[i] != '\0'; i++)
+        {
+                if (status == 1)
+                {
+                        break;
+                        printf("not digit");
+                        return (1);
+                }
+                while (isdigit(str[i]))
+                {
+                        printf("%c", str[i]);
+
+                        if (isdigit(str[i + 1]))
+                        {
+                                status = 1;
+                        }
+                        i++;
+                }
+        }
+        return (0);
+}
+
+
 /**
  * get_name - function
  * @path: tha path to be analyzed
@@ -9,7 +36,6 @@
  */
 char *get_name(char *path)
 {
-	stack_t **stack;
 	char *token;
 	char *temp;
 
@@ -30,7 +56,7 @@ int global_variable = 1;
 * Description: a function to analyse each line and use the right function
 * Return: nothing
 */
-void *getbuffer(char *buffer, stack_t **stack, unsigned int line_count)
+void getbuffer(char *buffer, stack_t **stack, unsigned int line_count)
 {
 	int i = 0;
 	int y = 0;
@@ -107,7 +133,6 @@ int main(int argc, char *argv[])
 {
 	FILE *fileOpen;
 	size_t  bufsize;
-	ssize_t line_size;
 	char *fileName, *buffer = NULL;
 	int line_count = 0;
 	stack_t **st = NULL;
@@ -172,7 +197,7 @@ int main(int argc, char *argv[])
 				//line_size, bufsize, buffer);
 
 		/* Get the next line */
-		printf("line_size\n");
+		/*printf("line_size\n");*/
 		/*line_size = getline(&buffer, &line_size, fileOpen);*/
 		getbuffer(buffer, st, line_count);
 		line_count++;
