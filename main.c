@@ -1,33 +1,31 @@
 #include "monty.h"
 #include <stdio.h>
 #include <stdlib.h>
-
-int is_digit(char *str)
+/**
+ * is_digit - function
+ * @s: tha path to be analyzed
+ * Description: a function that checks if a number is digit or not
+ * Return: 0 on success 1 on failure
+ */
+int is_digit(char *s, unsigned int line_count, char *parameter)
 {
-        int i, status;
-        for (i = 0; str[i] != '\0'; i++)
-        {
-                if (status == 1)
-                {
-                        break;
-                        printf("not digit");
-                        return (1);
-                }
-                while (isdigit(str[i]))
-                {
-                        printf("%c", str[i]);
+	int n;
+	int i;
 
-                        if (isdigit(str[i + 1]))
-                        {
-                                status = 1;
-                        }
-                        i++;
-                }
-        }
-        return (0);
+	if (s == NULL)
+		return (1);
+
+	n = strlen(s);
+	for (i = 0; i < n; i++)
+	{
+		if (!(s[i] >= '0' && s[i] <= '9'))
+		{
+			fprintf(stderr, "L%u: unknown instruction %s\n", line_count, parameter);
+			exit(EXIT_FAILURE);
+		}
+	}
+	return (0);
 }
-
-
 /**
  * get_name - function
  * @path: tha path to be analyzed
@@ -51,28 +49,29 @@ char *get_name(char *path)
 }
 int global_variable = 1;
 /**
-* getbuffer - function
-* @buffer: tha buffer oft the getline
-* Description: a function to analyse each line and use the right function
-* Return: nothing
-*/
+ * getbuffer - function
+ * @buffer: tha buffer oft the getline
+ * Description: a function to analyse each line and use the right function
+ * Return: nothing
+ */
 void getbuffer(char *buffer, stack_t **stack, unsigned int line_count)
 {
 	int i = 0;
 	int y = 0;
-	char **argv = NULL;
+	char *argv[10];
 	char *token = NULL;
 
 	if (buffer == NULL)
 		exit(2);
 
-	token = malloc(sizeof(char) * 1024);
-	if (!token)
-		exit(2);
-	argv = malloc(sizeof(char *) * 1024);
-	if (!argv)
-		exit(2);
-	instruction_t inst[] = {{"push",push}, {"pall",pall}, {NULL, 0}};
+	/*token = malloc(sizeof(char) * 1024);
+	  if (!token)
+	  exit(2);
+	  */
+	/*argv = malloc(sizeof(char *) * 1024);
+	  if (!argv)
+	  exit(2);*/
+	instruction_t inst[] = {{"push", push}, {"pall", pall}, {NULL, 0}};
 
 	token = strtok(buffer, " \n");
 	while (token)
@@ -81,20 +80,28 @@ void getbuffer(char *buffer, stack_t **stack, unsigned int line_count)
 		token = strtok(NULL, " \n");
 		i++;
 	}
-	for (i = 0; argv[i] != NULL; i++)
+	for (y = 0; inst[y].opcode != NULL; y++)
 	{
-		for (y = 0; inst[y].opcode; y++)
-		{	
-			if (strcmp(inst[y].opcode, argv[i]) == 0)
+		if (argv[0] == NULL)
+			break;
+		if (strcmp(inst[y].opcode, argv[0]) == 0)
 		{
-				if (strcmp(argv[0], "pall") != 0)
-					global_variable = atoi(argv[i + 1]);
-				inst[y].f(stack, line_count);
+			if (strcmp(argv[0], "push") == 0)
+			{
+				/*0s_digit(argv[1], line_count, inst[y].opcode);*/
+				global_variable = atoi(argv[1]);
+			}
+			inst[y].f(stack, line_count);
 		}
-		}
+		/**
+		 * else
+		 {
+		 printf("L%u: unknown instruction %s\n", line_count, inst[y].opcode);
+		 exit(EXIT_FAILURE);
+		 }
+		 */
+	}
 }
-}
-
 void push(stack_t **stack, unsigned int line_number)
 {
 	stack_t *new = malloc(sizeof(stack_t));
@@ -104,7 +111,7 @@ void push(stack_t **stack, unsigned int line_number)
 	if (!stack)
 		exit(2);
 	new->n = global_variable;
-	
+
 	new->next = (*stack);
 	new->prev = NULL;
 
@@ -112,11 +119,10 @@ void push(stack_t **stack, unsigned int line_number)
 		(*stack)->prev = new;
 
 	*stack = new;
-	printf("%d",(*stack)->n);
+	/*printf("%d", (*stack)->n);*/
 }
 void pall(stack_t **stack, unsigned int line_number)
 {
-	printf("\nteseswrxdtcfyvuebinr,kdncbhfvnt\n");
 	while (*stack)
 	{
 		printf("%d\n", (*stack)->n);
@@ -134,7 +140,7 @@ int main(int argc, char *argv[])
 	FILE *fileOpen;
 	size_t  bufsize;
 	char *fileName, *buffer = NULL;
-	int line_count = 0;
+	int line_count = 1;
 	stack_t **st = NULL;
 	st = malloc(sizeof(stack_t));
 	if (!st)
@@ -164,7 +170,6 @@ int main(int argc, char *argv[])
 	 * create a function to extract the name
 	 */
 	fileName = get_name(argv[1]);
-	printf("%s\n", fileName);
 	fileOpen = fopen(fileName, "r");
 	if (!(fileOpen))
 	{
@@ -194,7 +199,7 @@ int main(int argc, char *argv[])
 
 		/* Show the line details */
 		//printf("line[%06d]: chars=%06zd, buf size=%06zu, contents: %s\n", line_count,
-				//line_size, bufsize, buffer);
+		//line_size, bufsize, buffer);
 
 		/* Get the next line */
 		/*printf("line_size\n");*/
@@ -204,5 +209,5 @@ int main(int argc, char *argv[])
 	}
 	fclose(fileOpen);
 	return (0);
-
 }
+
