@@ -4,6 +4,7 @@
 /**
  * is_digit - function
  * @s: tha path to be analyzed
+ * @line_count: number of lines
  * Description: a function that checks if a number is digit or not
  * Return: 0 on success 1 on failure
  */
@@ -51,6 +52,8 @@ int global_variable = 1;
 /**
  * getbuffer - function
  * @buffer: tha buffer oft the getline
+ * @stack: double pointer
+ * @line_count: number of line
  * Description: a function to analyse each line and use the right function
  * Return: nothing
  */
@@ -85,42 +88,65 @@ void getbuffer(char *buffer, stack_t **stack, unsigned int line_count)
 				global_variable = atoi(argv[1]);
 			}
 			inst[y].f(stack, line_count);
+			return;
 		}
-		/**
-		 * else
-		 {
-		 printf("L%u: unknown instruction %s\n", line_count, inst[y].opcode);
-		 exit(EXIT_FAILURE);
-		 }
-		 */
 	}
+	if (inst[y].opcode == NULL)
+		/* if we didnt find the user input it must be wrong*/
+	{
+		fprintf(stderr, "L%u: unknown instruction %s\n", line_count, argv[0]);
+		exit(EXIT_FAILURE);
+	}
+	free(token);
+	token = NULL;
 }
+/**
+ * push - function
+ * @stack: double pointer
+ * @line_number: number of line
+ * Description: a function that pushes data
+ * Return: nothing
+ */
 void push(stack_t **stack, unsigned int line_number)
 {
 	stack_t *new = malloc(sizeof(stack_t));
+
 	if (new == NULL)
 		exit(2);
 
-	if (!stack)
+	if (stack == NULL)
 		exit(2);
+
 	new->n = global_variable;
 
-	new->next = (*stack);
+	new->next = NULL;
 	new->prev = NULL;
 
 	if (*stack != NULL)
+	{
 		(*stack)->prev = new;
+		new->next = (*stack);
+	}
 
 	*stack = new;
 	/*printf("%d", (*stack)->n);*/
 }
+/**
+ * pall - function
+ * @stack: double pointer
+ * @line_number: number of line
+ * Description: a function to analyse each line and use the right function
+ * Return: nothing
+ */
 void pall(stack_t **stack, unsigned int line_number)
 {
-	while (*stack)
+	stack_t *head = (*stack);
+	while (stack && *stack)
 	{
 		printf("%d\n", (*stack)->n);
 		*stack = (*stack)->next;
 	}
+	*stack = head;
 }
 /**
  * main - main function for monty interpreter
@@ -135,72 +161,37 @@ int main(int argc, char *argv[])
 	char *fileName, *buffer = NULL;
 	int line_count = 1;
 	stack_t **st = NULL;
-	st = malloc(sizeof(stack_t));
-	if (!st)
-		exit(2);
+	stack_t *tmp = NULL;
 
-	/*handle error cases*/
-	/**
-	 *If the user does not give any file
-	 *or more than one argument to your program,
-	 *print the error message USAGE: monty file
-	 *followed by a new line, and exit with the status EXIT_FAILURE
-	 */
+	st = malloc(sizeof(stack_t *));
+	*st = NULL;
+
 	if (argc != 2)
 	{
 		dprintf(STDERR_FILENO, "USAGE: monty file\n");
 		return (EXIT_FAILURE);
 	}
-	/**
-	 *If, for any reason, it’s not possible to open the file,
-	 *print the error message Error: Can't open file <file>,
-	 *followed by a new line, and exit with the status EXIT_FAILURE
-	 *where <file> is the name of the file
-	 */
-	/**
-	 * so we need to extract the name of the file from the path
-	 * using strtok
-	 * create a function to extract the name
-	 */
 	fileName = get_name(argv[1]);
 	fileOpen = fopen(fileName, "r");
 	if (!(fileOpen))
 	{
 		dprintf(STDERR_FILENO, "Error: Can't open file %s\n", fileName);
 	}
-	/* Get the first line of the file. */
 
-	/* Loop through until we are done with the file. */
 	while (getline(&buffer, &bufsize, fileOpen) >= 0)
 	{
-		/**
-		 *If the file contains an invalid instruction,
-		 *print the error message L<line_number>:unknown instruction <opcode>,
-		 *followed by a new line, and exit with the status EXIT_FAILURE
-		 *where is the line number where the instruction appears.
-		 *Line numbers always start at 1
-		 */
-		/**create a function
-		 * to analyze the lines using strtok
-		 * and compare the contents of the lines with the
-		 * corresponding operations and functions
-		 * using the given structure data type "instruction_t;"
-		 */
-
-		/* Increment our line count */
-
-
-		/* Show the line details */
-		//printf("line[%06d]: chars=%06zd, buf size=%06zu, contents: %s\n", line_count,
-		//line_size, bufsize, buffer);
-
-		/* Get the next line */
-		/*printf("line_size\n");*/
-		/*line_size = getline(&buffer, &line_size, fileOpen);*/
 		getbuffer(buffer, st, line_count);
 		line_count++;
 	}
 	fclose(fileOpen);
+	while (*st)
+	{
+		tmp = (*st);
+		*st = (*st)->next;
+		free(tmp);
+		tmp = NULL;
+	}
+	free(st), free(buffer);
+	buffer = NULL, st = NULL;
 	return (0);
 }
-
