@@ -13,9 +13,11 @@ int is_digit(char *s, unsigned int line_count)
 {
 	int n;
 	int i;
-
-	if (s == NULL)
+	if (!s)
+	{
+		fprintf(stderr, "L%u: usage: push integer\n", line_count);
 		exit(EXIT_FAILURE);
+	}
 
 	n = strlen(s);
 	for (i = 0; i < n; i++)
@@ -74,10 +76,11 @@ void getbuffer(char *buffer, stack_t **stack, unsigned int line_count)
 		token = strtok(NULL, " \n");
 		i++;
 	}
+	argv[i] = NULL;
 	for (y = 0; inst[y].opcode != NULL; y++)
 	{
 		if (argv[0] == NULL)
-			break;
+			return;
 		if (strcmp(inst[y].opcode, argv[0]) == 0)
 		{
 			if (strcmp(argv[0], "push") == 0)
@@ -89,6 +92,7 @@ void getbuffer(char *buffer, stack_t **stack, unsigned int line_count)
 			return;
 		}
 	}
+	
 	if (inst[y].opcode == NULL)
 		/* if we didnt find the user input it must be wrong*/
 	{
@@ -226,15 +230,17 @@ int main(int argc, char *argv[])
 	if (!(fileOpen))
 	{
 		dprintf(STDERR_FILENO, "Error: Can't open file %s\n", fileName);
+		return (EXIT_FAILURE);
 	}
 
-	while (getline(&buffer, &bufsize, fileOpen) >= 0)
-	{
-		getbuffer(buffer, st, line_count);
-		line_count++;
-	}
-	fclose(fileOpen);
-	while (*st)
+		while (getline(&buffer, &bufsize, fileOpen) >= 0)
+		{
+
+			getbuffer(buffer, st, line_count);
+			line_count++;
+		}
+		fclose(fileOpen);
+		while (*st)
 	{
 		tmp = (*st);
 		*st = (*st)->next;
