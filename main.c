@@ -67,7 +67,7 @@ void getbuffer(char *buffer, stack_t **stack, unsigned int line_count)
 	if (buffer == NULL)
 		exit(2);
 
-	instruction_t inst[] = {{"push", push}, {"pall", pall}, {NULL, 0}};
+	instruction_t inst[] = {{"push", push}, {"pall", pall}, {"pint", pint}, {"pop", pop}, {NULL, 0}};
 
 	token = strtok(buffer, " \n");
 	while (token)
@@ -147,6 +147,47 @@ void pall(stack_t **stack, unsigned int line_number)
 		*stack = (*stack)->next;
 	}
 	*stack = head;
+}
+/**
+ * pint - function
+ * @stack: double pointer
+ * @line_number: number of line
+ * Description: a function that prints
+ * Return: nothing
+ */
+void pint(stack_t **stack, unsigned int line_number)
+{
+	if (!*stack)
+	{
+		fprintf(stderr, "L%d: can't pop an empty stack\n", line_number);
+		exit(EXIT_FAILURE);
+	}
+
+	printf("%d\n", (*stack)->n);
+
+}
+/**
+ * pop - function
+ * @stack: double pointer
+ * @line_number: number of line
+ * Description: a function that removes from the stack
+ * Return: nothing
+ */
+void pop(stack_t **stack, unsigned int line_number)
+{
+	if (*stack == NULL)
+	{	fprintf(stderr, "L%d: can't pop an empty stack\n", line_number);
+		exit(EXIT_FAILURE);
+	}
+
+	stack_t *node;
+
+	node = *stack;
+
+	*stack = (*stack)->next;
+
+	free(node);
+	node = NULL;
 }
 /**
  * main - main function for monty interpreter
