@@ -73,8 +73,7 @@ void getbuffer(char *buffer, stack_t **stack, unsigned int line_count)
 	char *argv[64];
 	char *token = NULL;
 	instruction_t inst[] = {{"push", push}, {"pall", pall}, {"pint", pint},
-		{"pop", pop}, {"swap", swap}, {NULL, 0}};
-
+		{"pop", pop}, {"swap", swap}, {"add", add}, {NULL, 0}};
 	if (buffer == NULL)
 		exit(2);
 	token = strtok(buffer, " \n");
@@ -87,6 +86,8 @@ void getbuffer(char *buffer, stack_t **stack, unsigned int line_count)
 	argv[i] = NULL;
 	for (y = 0; inst[y].opcode != NULL; y++)
 	{
+		if (strcmp(argv[0], "nop") == 0)
+			return;
 		if (argv[0] == NULL)
 			return;
 		if (strcmp(inst[y].opcode, argv[0]) == 0)
@@ -100,9 +101,7 @@ void getbuffer(char *buffer, stack_t **stack, unsigned int line_count)
 			return;
 		}
 	}
-
 	if (inst[y].opcode == NULL)
-		/* if we didnt find the user input it must be wrong*/
 	{
 		fprintf(stderr, "L%u: unknown instruction %s\n", line_count, argv[0]);
 		exit(EXIT_FAILURE);
@@ -180,7 +179,7 @@ void pint(stack_t **stack, unsigned int line_number)
 {
 	if (!*stack)
 	{
-		fprintf(stderr, "L%d: can't pint an empty stack\n", line_number);
+		fprintf(stderr, "L%d: L1: can't pint, stack empty\n", line_number);
 		exit(EXIT_FAILURE);
 	}
 
@@ -211,16 +210,19 @@ void pop(stack_t **stack, unsigned int line_number)
 	node = NULL;
 }
 /**
- * pop - function
+ * swap - function
  * @stack: double pointer
  * @line_number: number of line
- * Description: a function that removes from the stack
+ * Description: a function that swaps 2 entries
  * Return: nothing
  */
 void swap(stack_t **stack, unsigned int line_number)
 {
 	if (*stack == NULL)
+	{
+		fprintf(stderr, "L%d: can't swap, stack too short\n", line_number);
 		exit(EXIT_FAILURE);
+	}
 	if (!(*stack)->next)
 	{
 		fprintf(stderr, "L%d: can't swap, stack too short\n", line_number);
@@ -234,6 +236,31 @@ void swap(stack_t **stack, unsigned int line_number)
 	node = tmp->n;
 	tmp->n = (*stack)->n;
 	(*stack)->n = node;
+}
+/**
+ * add - function
+ * @stack: double pointer
+ * @line_number: number of line
+ * Description: a function that adds 2 entries
+ * Return: nothing
+ */
+void add(stack_t **stack, unsigned int line_number)
+{
+	stack_t *tmp;
+
+	if (!*stack)
+	{
+		fprintf(stderr, "L%d: can't add, stack too short\n", line_number);
+		exit(EXIT_FAILURE);
+	}
+	if (!(*stack)->next)
+	{
+		fprintf(stderr, "L%d: can't add, stack too short\n", line_number);
+		exit(EXIT_FAILURE);
+	}
+		tmp = (*stack)->next;
+	tmp->n = tmp->n + (*stack)->n;
+	free((tmp->prev));
 }
 /**
  * main - main function
