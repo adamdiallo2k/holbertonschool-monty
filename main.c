@@ -72,7 +72,8 @@ void getbuffer(char *buffer, stack_t **stack, unsigned int line_count)
 	int y = 0;
 	char *argv[64];
 	char *token = NULL;
-	instruction_t inst[] = {{"push", push}, {"pall", pall}, {"pint", pint}, {"pop", pop}, {NULL, 0}};
+	instruction_t inst[] = {{"push", push}, {"pall", pall}, {"pint", pint},
+		{"pop", pop}, {"swap", swap}, {NULL, 0}};
 
 	if (buffer == NULL)
 		exit(2);
@@ -219,9 +220,12 @@ void pop(stack_t **stack, unsigned int line_number)
 void swap(stack_t **stack, unsigned int line_number)
 {
 	if (*stack == NULL)
-		exit(2);
+		exit(EXIT_FAILURE);
 	if (!(*stack)->next)
-		exit(2);
+	{
+		fprintf(stderr, "L%d: can't swap, stack too short\n", line_number);
+		exit(EXIT_FAILURE);
+	}
 	/* declaration of variable */
 	int node;
 	stack_t *tmp;
