@@ -1,6 +1,7 @@
 #include "monty.h"
 #include <stdio.h>
 #include <stdlib.h>
+int global_variable = 1;
 /**
  * is_digit - function
  * @s: tha path to be analyzed
@@ -48,7 +49,6 @@ char *get_name(char *path)
 	}
 	return (token);
 }
-int global_variable = 1;
 /**
  * getbuffer - function
  * @buffer: tha buffer oft the getline
@@ -63,12 +63,10 @@ void getbuffer(char *buffer, stack_t **stack, unsigned int line_count)
 	int y = 0;
 	char *argv[10];
 	char *token = NULL;
+	instruction_t inst[] = {{"push", push}, {"pall", pall}, {"pint", pint}, {"pop", pop}, {NULL, 0}};
 
 	if (buffer == NULL)
 		exit(2);
-
-	instruction_t inst[] = {{"push", push}, {"pall", pall}, {"pint", pint}, {"pop", pop}, {NULL, 0}};
-
 	token = strtok(buffer, " \n");
 	while (token)
 	{
@@ -110,16 +108,15 @@ void getbuffer(char *buffer, stack_t **stack, unsigned int line_count)
 void push(stack_t **stack, unsigned int line_number)
 
 {
+	stack_t *new = malloc(sizeof(stack_t));
+	if (new == NULL)
+		exit(2);
+
 	if (!(stack || *stack))
 	{
 		fprintf(stderr, "L%u: usage: push integer\n", line_number);
 		exit(EXIT_FAILURE);
 	}
-	stack_t *new = malloc(sizeof(stack_t));
-
-	if (new == NULL)
-		exit(2);
-
 	if (stack == NULL)
 		exit(2);
 
@@ -146,12 +143,13 @@ void push(stack_t **stack, unsigned int line_number)
  */
 void pall(stack_t **stack, unsigned int line_number)
 {
+	stack_t *head = (*stack);
 
 	if (!(stack || *stack))
 	{
 		fprintf(stderr, "L%u: usage: push integer\n", line_number);
 		exit(EXIT_FAILURE);
-	}		stack_t *head = (*stack);
+	}
 	while (stack && *stack)
 	{
 		printf("%d\n", (*stack)->n);
@@ -186,14 +184,13 @@ void pint(stack_t **stack, unsigned int line_number)
  */
 void pop(stack_t **stack, unsigned int line_number)
 {
+	stack_t *node;
+
 	if (*stack == NULL)
 	{
 		fprintf(stderr, "L%d: can't pop an empty stack\n", line_number);
 		exit(EXIT_FAILURE);
 	}
-
-	stack_t *node;
-
 	node = *stack;
 
 	*stack = (*stack)->next;
@@ -202,7 +199,7 @@ void pop(stack_t **stack, unsigned int line_number)
 	node = NULL;
 }
 /**
- * main - main function for monty interpreter
+ * main - main function
  * @argc: arg count
  * @argv: arg vector list
  * Return: 0 on success or EXIT_FAILURE
