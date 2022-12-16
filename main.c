@@ -14,7 +14,7 @@ int is_digit(char *s, unsigned int line_count)
 	int i;
 
 	if (s == NULL)
-		return (1);
+		exit(EXIT_FAILURE);
 
 	n = strlen(s);
 	for (i = 0; i < n; i++)
@@ -108,7 +108,13 @@ void getbuffer(char *buffer, stack_t **stack, unsigned int line_count)
  * Return: nothing
  */
 void push(stack_t **stack, unsigned int line_number)
+
 {
+	if (!(stack || *stack))
+	{
+		fprintf(stderr, "L%u: usage: push integer\n", line_number);
+		exit(EXIT_FAILURE);
+	}
 	stack_t *new = malloc(sizeof(stack_t));
 
 	if (new == NULL)
@@ -140,7 +146,12 @@ void push(stack_t **stack, unsigned int line_number)
  */
 void pall(stack_t **stack, unsigned int line_number)
 {
-	stack_t *head = (*stack);
+
+	if (!(stack || *stack))
+	{
+		fprintf(stderr, "L%u: usage: push integer\n", line_number);
+		exit(EXIT_FAILURE);
+	}		stack_t *head = (*stack);
 	while (stack && *stack)
 	{
 		printf("%d\n", (*stack)->n);
@@ -176,7 +187,8 @@ void pint(stack_t **stack, unsigned int line_number)
 void pop(stack_t **stack, unsigned int line_number)
 {
 	if (*stack == NULL)
-	{	fprintf(stderr, "L%d: can't pop an empty stack\n", line_number);
+	{
+		fprintf(stderr, "L%d: can't pop an empty stack\n", line_number);
 		exit(EXIT_FAILURE);
 	}
 
