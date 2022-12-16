@@ -13,6 +13,8 @@ int is_digit(char *s, unsigned int line_count)
 {
 	int n;
 	int i;
+	int j;
+
 	if (!s)
 	{
 		fprintf(stderr, "L%u: usage: push integer\n", line_count);
@@ -20,6 +22,11 @@ int is_digit(char *s, unsigned int line_count)
 	}
 
 	n = strlen(s);
+	for (j = 1; j < n; j++)
+	{
+		if ((s[0] == '-') && (s[j] >= '0' && s[j] <= '9'))
+			return (0);
+	}
 	for (i = 0; i < n; i++)
 	{
 		if (!(s[i] >= '0' && s[i] <= '9'))
@@ -63,7 +70,7 @@ void getbuffer(char *buffer, stack_t **stack, unsigned int line_count)
 {
 	int i = 0;
 	int y = 0;
-	char *argv[10];
+	char *argv[64];
 	char *token = NULL;
 	instruction_t inst[] = {{"push", push}, {"pall", pall}, {"pint", pint}, {"pop", pop}, {NULL, 0}};
 
@@ -92,7 +99,7 @@ void getbuffer(char *buffer, stack_t **stack, unsigned int line_count)
 			return;
 		}
 	}
-	
+
 	if (inst[y].opcode == NULL)
 		/* if we didnt find the user input it must be wrong*/
 	{
@@ -172,7 +179,7 @@ void pint(stack_t **stack, unsigned int line_number)
 {
 	if (!*stack)
 	{
-		fprintf(stderr, "L%d: can't pop an empty stack\n", line_number);
+		fprintf(stderr, "L%d: can't pint an empty stack\n", line_number);
 		exit(EXIT_FAILURE);
 	}
 
@@ -201,6 +208,28 @@ void pop(stack_t **stack, unsigned int line_number)
 
 	free(node);
 	node = NULL;
+}
+/**
+ * pop - function
+ * @stack: double pointer
+ * @line_number: number of line
+ * Description: a function that removes from the stack
+ * Return: nothing
+ */
+void swap(stack_t **stack, unsigned int line_number)
+{
+	if (*stack == NULL)
+		exit(2);
+	if (!(*stack)->next)
+		exit(2);
+	/* declaration of variable */
+	int node;
+	stack_t *tmp;
+
+	tmp = (*stack)->next;
+	node = tmp->n;
+	tmp->n = (*stack)->n;
+	(*stack)->n = node;
 }
 /**
  * main - main function
@@ -233,14 +262,14 @@ int main(int argc, char *argv[])
 		return (EXIT_FAILURE);
 	}
 
-		while (getline(&buffer, &bufsize, fileOpen) >= 0)
-		{
+	while (getline(&buffer, &bufsize, fileOpen) >= 0)
+	{
 
-			getbuffer(buffer, st, line_count);
-			line_count++;
-		}
-		fclose(fileOpen);
-		while (*st)
+		getbuffer(buffer, st, line_count);
+		line_count++;
+	}
+	fclose(fileOpen);
+	while (*st)
 	{
 		tmp = (*st);
 		*st = (*st)->next;
