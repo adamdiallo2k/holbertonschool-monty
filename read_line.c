@@ -7,7 +7,7 @@
  * @fp: open file
  * Return: 0
  */
-b
+
 void read_line(FILE *fp)
 {
 	char line[MAX_LEN];
