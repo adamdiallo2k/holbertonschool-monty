@@ -7,7 +7,7 @@
  * @str: the string to check
  * @top: double pointer to the linked list
  * @line_number: line number of file
- * Return: success or failure
+ * Return: success or failuree
  *
  */
 int get_instructions(char *str, stack_t **top, unsigned int line_number)
