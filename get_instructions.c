@@ -16,7 +16,6 @@ int get_instructions(char *str, stack_t **top, unsigned int line_number)
 		{"push", push},
 		{"pall", pall},
 		{"pop", pop},
-		{"nop", nop},
 		{"swap", swap},
 		{"add", add},
 		{NULL, NULL}
