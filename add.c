@@ -10,7 +10,7 @@
  * Return: 0
  */
 
-void op_add(stack_t **top, unsigned int line_number)
+void add(stack_t **top, unsigned int line_number)
 {
 	int num1 = 0;
 	int num2 = 0;
